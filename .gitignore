@@ -1,0 +1,13 @@
+# Do not track the following directories and their respective contents
+bin/
+installer/
+lib/
+out/
+
+# Ignore files .class, .iss and .xml files
+*.class
+*.iss
+*.xml
+
+# Ignore .xml files with the exception of build.xml file
+!build.xml

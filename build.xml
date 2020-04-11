@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GPlayer-Project" default="jar-deploy" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+<property name="JAVA_HOME" value="C:/Program Files/Java/jdk1.8.0_212"/>
+<property name="src.dir" value="src"/>
+<property name="bin.dir" value="bin"/>
+<property name="lib.dir" value="lib"/>
+<property name="java.dir" value="${src.dir}/main/java"/>
+<property name="resource.dir" value="${src.dir}/main/resources"/>
+<property name="out.dir" value="out"/>
+<property name="jarfile" value="GPlayer.jar"/>
+<target name="init">
+<path id="PathID">
+<file name="${JAVA_HOME}/lib/ant-javafx.jar"/>
+<file name="${JAVA_HOME}/lib/jfxrt.jar"/>
+<file name="${basedir}"/>
+</path>
+<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+uri="javafx:com.sun.javafx.tools.ant" classpathref="PathID"/>
+</target>
+
+<target name="setup">
+<delete dir="${bin.dir}"/>
+<delete dir="${lib.dir}"/>
+<delete dir="${out.dir}"/>
+<delete file="${jarfile}"/>
+<mkdir dir="${out.dir}"/>
+<mkdir dir="${lib.dir}"/>
+<copy todir="${lib.dir}">
+<fileset dir="external_jars"/>
+</copy>
+</target>
+
+<target name="compile" depends="init,setup">
+<javac includeantruntime="false" source="1.8" target="1.8" encoding="Cp1252"
+srcdir="${java.dir}" destdir="${out.dir}"
+fork="yes"
+executable="${JAVA_HOME}/bin/javac" debug="on">
+<classpath>
+<fileset dir="${lib.dir}"/>
+</classpath>
+</javac>
+</target>
+
+<target name="jar-deploy" depends="compile">
+<fx:resources id="resid">
+<fileset dir="${lib.dir}"/>
+</fx:resources>
+<fx:application id="appid"
+name="GPlayer"
+mainClass="gplayer.com.exec.GPlayer" version="1.0"/>
+<fx:jar destfile="${lib.dir}/${jarfile}">
+<fx:application refid="appid"/>
+<fx:resources refid="resid"/>
+<fileset dir="${out.dir}"/>
+<fileset dir="${src.dir}/main" includes="resources/**"/>
+</fx:jar>
+</target>
+
+<target name="app-deploy" depends="jar-deploy">
+<mkdir dir="${bin.dir}"/>
+<fx:deploy width="600" height="400"
+embedJNLP="false" extension="false"
+includeDT="false" offlineAllowed="true"
+outdir="${bin.dir}" outfile="GPlayer"
+desktop="true" nativeBundles="image">
+<fx:platform basedir="${java.home}">
+<fx:jvmuserarg name="-Xms" value="1024m"/>
+</fx:platform>
+<fx:info title="GPlayer" vendor="Ganiyu Emilandu">
+<fx:icon href="${resource.dir}/icons/gplayer.ico" kind="shortcut"
+height="32" width="32" depth="8"/>
+</fx:info>
+<fx:application refid="appid"/>
+<fx:resources>
+<fileset dir="." includes="${lib.dir}/**"/>
+</fx:resources>
+</fx:deploy>
+</target>
+</project>
